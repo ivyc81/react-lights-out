@@ -74,21 +74,24 @@ class Board extends Component {
       //   }
       // }
       let newBoard = board.map((row, idx) =>
+
         idx >= y - 1 && idx <= y + 1
+
           ? row.map((isLit, col) =>
-            {if ((idx === y-1 || idx === y+1) && col ===x){
+            {if ((idx === y-1 || idx === y+1) && col ===x){ //cell above and below change
               return !isLit;
-            } else if (idx === y && col >= x-1 && col <= x+1) {
+            } else if (idx === y && col >= x-1 && col <= x+1) { //cell, cell to right, and cell to left change
               return !isLit;
             } else {
               return isLit;
             }})
+
           : row)
 
       
       return newBoard
     }
-
+    //check winning board, return true if all cells are false
     function checkWin(board){
       let win = board.every( row => row.every ( lit => lit === false));
       return win;
@@ -107,20 +110,20 @@ class Board extends Component {
 
     // if the game is won, just show a winning msg & render nothing else
 
-    // TODO
+    // FINISHED
 
     // make table board
 
-    // TODO
+    // FINISHED
     return (this.state.hasWon ?
       <p>YOU WON!</p>
       :
-      <div>
+      <table>
         {this.state.board.map((row, y) =>
-          <div key = {y}>
+          <tr key = {y}>
             {row.map((cell, x) => <Cell key={`${y}-${x}`} isLit={cell} flipCellsAroundMe={() => this.flipCellsAround(`${y}-${x}`)} />)}
-          </div>)}
-      </div>);
+          </tr>)}
+      </table>);
   }
 
 }
