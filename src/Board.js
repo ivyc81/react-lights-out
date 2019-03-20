@@ -33,7 +33,7 @@ class Board extends Component {
   static defaultProps = {
     columns: 5,
     rows: 5,
-    chanceLightStartsOn: 0.2,
+    randomTimes: 2,
   }
 
   constructor(props) {
@@ -49,12 +49,38 @@ class Board extends Component {
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
 
   createBoard() {
-    const { rows, columns, chanceLightStartsOn } = this.props;
+    const { rows, columns } = this.props;
     // FINISHED: create array-of-arrays of true/false values
     const board = Array.from({ length: rows },
       (row) => Array.from({ length: columns },
-        (lit) => Math.random() < chanceLightStartsOn));
+        (lit) => false));
+
+      for(let i = 0; i < this.props.randomTimes; i++){
+        let x = this.pickRandom(this.props.columns);
+        let y = this.pickRandom(this.props.rows);
+
+        function flipCell(y, x) {
+          // if this coord is actually on board, flip it
+          // FINISHED: flip this cell and the cells around it
+          if (x >= 0 && x < columns && y >= 0 && y < rows) {
+            board[y][x] = !board[y][x];
+            }
+        }
+
+        flipCell(y, x);
+        flipCell(y, x - 1);
+        flipCell(y, x + 1);
+        flipCell(y - 1, x);
+        flipCell(y + 1, x);
+      }
+
+
     return board;
+  }
+
+
+  pickRandom(num) {
+    return Math.floor(Math.random()*num);
   }
 
   /** handle changing a cell: update board & determine if winner */
