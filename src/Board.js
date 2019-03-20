@@ -33,7 +33,7 @@ class Board extends Component {
   static defaultProps = {
     columns: 5,
     rows: 5,
-    chanceLightStartsOn: 0,
+    chanceLightStartsOn: 0.2,
   }
 
   constructor(props) {
@@ -60,48 +60,35 @@ class Board extends Component {
   /** handle changing a cell: update board & determine if winner */
 
   flipCellsAround(coord) {
-    // let { ncols, nrows } = this.props;
-    let board = this.state.board;
+    let { columns, rows } = this.props;
+    let board = this.state.board.map(r => r.map(c => c));
     let [y, x] = coord.split("-").map(Number);
 
 
     function flipCell(y, x) {
       // if this coord is actually on board, flip it
       // FINISHED: flip this cell and the cells around it
-
-      //   if (x >= 0 && x < ncols && y >= 0 && y < nrows) {
-      //     board[y][x] = !board[y][x];
-      //   }
-      // }
-      let newBoard = board.map((row, idx) =>
-
-        idx >= y - 1 && idx <= y + 1
-
-          ? row.map((isLit, col) =>
-            {if ((idx === y-1 || idx === y+1) && col ===x){ //cell above and below change
-              return !isLit;
-            } else if (idx === y && col >= x-1 && col <= x+1) { //cell, cell to right, and cell to left change
-              return !isLit;
-            } else {
-              return isLit;
-            }})
-
-          : row)
-
-      
-      return newBoard
+      if (x >= 0 && x < columns && y >= 0 && y < rows) {
+        board[y][x] = !board[y][x];
+        }
     }
+
+    flipCell(y, x);
+    flipCell(y, x - 1);
+    flipCell(y, x + 1);
+    flipCell(y - 1, x);
+    flipCell(y + 1, x);
+
     //check winning board, return true if all cells are false
     function checkWin(board){
       let win = board.every( row => row.every ( lit => lit === false));
       return win;
     }
 
-    let newBoard = flipCell(y, x);
+    // let newBoard = flipCell(y, x);
+    this.setState({board,
+                   hasWon: checkWin(board)});
 
-    this.setState({board: newBoard,
-                   hasWon: checkWin(newBoard)});
-    
   }
 
   /** Render game board or winning message. */
@@ -118,12 +105,12 @@ class Board extends Component {
     return (this.state.hasWon ?
       <p>YOU WON!</p>
       :
-      <table>
+      <tbody>
         {this.state.board.map((row, y) =>
           <tr key = {y}>
             {row.map((cell, x) => <Cell key={`${y}-${x}`} isLit={cell} flipCellsAroundMe={() => this.flipCellsAround(`${y}-${x}`)} />)}
           </tr>)}
-      </table>);
+      </tbody>);
   }
 
 }
